@@ -8,6 +8,14 @@ BATCH=20240905_LH00130_0079_A22NYLJLT3_Gaiti_Pai
 INPUT_DIR=/.mounts/labs/pailab/private/projects/MB_scDNAme/processed_input/scaleBio_pilot/${BATCH}
 OUTPUT_DIR=/.mounts/labs/pailab/private/projects/MB_scDNAme/output/scaleBio_pilot/${BATCH}/ScaleMethyl_output
 
+EMAIL=xsun@oicr.on.ca
+
+SCALEMETHYL_DIR=/.mounts/labs/pailab/private/xsun/Github/MB_ITH/scDNAm/scaleBio/processingRaw/Tools/ScaleMethyl-main/
+CONFIG_FILE=/.mounts/labs/pailab/private/xsun/Github/MB_ITH/scDNAm/scaleBio/processingRaw/config/oicr_hpc.config
+PARAMS_FILE=/.mounts/labs/pailab/private/xsun/Github/MB_ITH/scDNAm/scaleBio/processingRaw/Tools/ScaleMethyl-main/docs/examples/runParams.yml
+GENOME_JSON=/.mounts/labs/pailab/private/xsun/Database/scaleMethyl/reference/genome.json
+SAMPLE_CSV=/.mounts/labs/pailab/private/projects/MB_scDNAme/input/scaleBio_pilot/sample/20240905_LH00130_0079_A22NYLJLT3_Gaiti_Pai/ScaleMethyl-small-kit-2_samples.csv
+
 ### VALIDATE FILE ###
 num_R1=$(ls ${INPUT_DIR}/ScaleMethyl-small-kit-2_*_R1_*.fastq.gz 2>/dev/null | wc -l)
 num_I1=$(ls ${INPUT_DIR}/ScaleMethyl-small-kit-2_*_I1_*.fastq.gz 2>/dev/null | wc -l)
@@ -21,10 +29,24 @@ if [ "$num_R1" -ne "$num_I1" ] || [ "$num_R2" -ne "$num_I2" ]; then
 else
     mkdir -p ${OUTPUT_DIR}
     cd ${OUTPUT_DIR}
-    qsub -P pailab -V -cwd -b y -N scalemb -M xsun@oicr.on.ca -m ea \
-    	-l h_rt=1:0:0:0,h_vmem=1G -pe smp 4 \
-    	nextflow run /.mounts/labs/pailab/private/xsun/Github/ScaleMethyl/ -profile singularity -c /.mounts/labs/pailab/private/xsun/tmp/scaleTest/run/test.config -params-file /.mounts/labs/pailab/private/xsun/Github/ScaleMethyl/docs/examples/runParams.yml --genome /.mounts/labs/pailab/private/xsun/tmp/scaleTest/reference/genome.json --fastqDir /.mounts/labs/pailab/private/projects/MB_scDNAme/input/scaleBio_pilot/test/ --samples /.mounts/labs/pailab/private/projects/MB_scDNAme/input/scaleBio_pilot/sample/20240905_LH00130_0079_A22NYLJLT3_Gaiti_Pai/ScaleMethyl-small-kit-2_samples.csv --outDir /.mounts/labs/pailab/private/xsun/tmp/scaleTest/output/ScaleMethyl.out3
+
+    qsub -P pailab -V -cwd -b y -N scalemb -M ${EMAIL} -m ea \
+    	-l h_rt=5:0:0:0,h_vmem=1G -pe smp 4 \
+    	nextflow run ${SCALEMETHYL_DIR} \
+    	-profile singularity \
+    	-c ${CONFIG_FILE} \
+    	-params-file ${PARAMS_FILE} \
+    	--genome ${GENOME_JSON} \
+    	--fastqDir ${INPUT_DIR} \
+    	--samples ${SAMPLE_CSV} \
+    	--outDir ${OUTPUT_DIR}
 fi
+
+
+
+
+
+
 
 
 
