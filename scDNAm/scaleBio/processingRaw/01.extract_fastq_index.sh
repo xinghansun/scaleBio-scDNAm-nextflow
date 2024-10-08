@@ -12,7 +12,7 @@ cp ${INPUT_DIR}/ScaleMethyl-small-kit-2_*_R{1,2}_*.fastq.gz ${OUTPUT_DIR}
 ## EXTRACT INDEX ##
 ls ${OUTPUT_DIR}/ScaleMethyl-small-kit-2_*_R1_*.fastq.gz | while read file; do
 	echo "--- Generating INDEX file for ${file}."
-	python3 ../Tools/ScaleUtilities-main/makeIndexFqs.py ${file} --outDir ${OUTPUT_DIR}
+	python3 ./Tools/ScaleUtilities-main/makeIndexFqs.py ${file} --outDir ${OUTPUT_DIR}
 done
 
 echo "--- Finished ---"
